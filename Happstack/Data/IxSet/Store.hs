@@ -44,10 +44,11 @@ import Data.Function (on)
 import Data.Generics (gshow)
 import Data.List (tails, groupBy, sortBy, intercalate)
 import qualified Data.Map as M
+import qualified Data.Set as Set
 import Data.Maybe (catMaybes, isJust, isNothing)
 import Data.Typeable (Typeable)
 import Happstack.Data (deriveSerialize, Default(..), deriveAll)
-import Happstack.Data.IxSet (Indexable(..), IxSet(..), (@=), (@+), toList, fromList, delete, insert, null, size)
+import Happstack.Data.IxSet (Indexable(..), IxSet(..), (@=), (@+), toList, fromList, delete, insert, null, size, toSet, fromSet)
 import Happstack.Data.IxSet.Merge (threeWayMerge, continue, threeWayMergeA, continueA)
 import Happstack.Data.IxSet.POSet (commonAncestor)
 import Happstack.Data.IxSet.Revision (Revisable(getRevisionInfo, putRevisionInfo), initialRevision,
