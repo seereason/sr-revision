@@ -1,0 +1,25 @@
+Name:             revision
+Version:          0.1.1
+License:          BSD3
+Author:           david@seereason.com
+Maintainer:       partners@seereason.com
+
+Synopsis:         Modules for revision control and merging
+Description:      Modules for revision control and merging.
+
+Exposed-Modules:  Happstack.Data.IxSet.POSet, Happstack.Data.IxSet.Revision, Happstack.Data.IxSet.Revision.Old1,
+                  Happstack.Data.IxSet.Revision.Current, Happstack.Data.IxSet.Revision.Instances, Happstack.Data.IxSet.Merge,
+		  Happstack.Data.IxSet.Store, Happstack.Data.IxSet.Triplets, Happstack.Data.IxSet.Extra
+                  
+Build-Depends:    base >= 4, containers, mtl, syb, syb-with-class, text, bytestring, applicative-extras,
+                  happstack-data, happstack-state, happstack-ixset
+
+Build-Type:       Simple
+Category:         Web, Language
+Extensions:             MultiParamTypeClasses,
+                        TypeFamilies,
+                        FlexibleContexts,
+                        FlexibleInstances,
+                        TypeSynonymInstances,
+                        OverlappingInstances,
+                        UndecidableInstances

@@ -1,0 +1,74 @@
+Source: haskell-revision
+Priority: optional
+Section: misc
+Maintainer: David Fox <david@seereason.com>
+Build-Depends: debhelper (>= 7.0),
+               haskell-devscripts (>= 0.6.15+nmu7),
+               hscolour,
+               cdbs,
+               ghc6 (>= 6.8),
+               ghc6-prof,
+               libghc6-applicative-extras-prof,
+               libghc6-happstack-data-prof,
+               libghc6-happstack-ixset-prof,
+               libghc6-happstack-state-prof,
+               libghc6-mtl-prof,
+               libghc6-syb-prof,
+               libghc6-syb-with-class-prof,
+               libghc6-text-prof
+Build-Depends-Indep: ghc6-doc,
+                     haddock,
+                     libghc6-applicative-extras-doc,
+                     haskell-happstack-data-doc,
+                     haskell-happstack-ixset-doc,
+                     haskell-happstack-state-doc,
+                     libghc6-mtl-doc,
+                     haskell-syb-doc,
+                     haskell-syb-with-class-doc,
+                     haskell-text-doc
+Build-Conflicts: libghc6-happstack-extra-dev (<< 0.87)
+Standards-Version: 3.8.1
+
+Package: libghc6-revision-dev
+Architecture: any
+Section: haskell
+Depends: ${haskell:Depends},
+         ${misc:Depends}
+Conflicts: libghc6-happstack-extra-dev (<< 0.87)
+Description: Modules for revision control and merging
+ Modules for revision control and merging.
+ .
+  Author: david@seereason.com
+  Upstream-Maintainer: partners@seereason.com
+ .
+ This package contains the normal library files.
+
+Package: libghc6-revision-prof
+Architecture: any
+Section: haskell
+Depends: ${haskell:Depends},
+         ${misc:Depends},
+         libghc6-revision-dev
+Conflicts: libghc6-happstack-extra-prof (<< 0.87)
+Description: Modules for revision control and merging
+ Modules for revision control and merging.
+ .
+  Author: david@seereason.com
+  Upstream-Maintainer: partners@seereason.com
+ .
+ This package contains the libraries compiled with profiling enabled.
+
+Package: haskell-revision-doc
+Architecture: all
+Section: doc
+Depends: ${haskell:Depends},
+         ${misc:Depends},
+         ghc6-doc
+Conflicts: haskell-happstack-extra-doc (<< 0.87)
+Description: Modules for revision control and merging
+ Modules for revision control and merging.
+ .
+  Author: david@seereason.com
+  Upstream-Maintainer: partners@seereason.com
+ .
+ This package contains the documentation files.

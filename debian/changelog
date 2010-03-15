@@ -1,0 +1,6 @@
+haskell-revision (0.1.1) unstable; urgency=low
+
+  * Extracted from happstack-extra.
+
+ -- David Fox <david@seereason.com>  Mon, 15 Mar 2010 10:28:05 -0700
+
