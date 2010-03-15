@@ -41,7 +41,6 @@ import Control.Applicative (Applicative(..))
 import Control.Monad (MonadPlus(..))
 import Data.Data (Data)
 import Data.Function (on)
-import Data.Generics (gshow)
 import Data.List (tails, groupBy, sortBy, intercalate)
 import qualified Data.Map as M
 import qualified Data.Set as Set
@@ -199,7 +198,7 @@ askTriplets scrub i store =
 
 -- |Create a new revision of an existing element, and then try to
 -- merge all the heads.
-reviseAndMerge :: (MonadPlus m, Store set k elt s) =>
+reviseAndMerge :: (MonadPlus m, Store set k elt s, Show elt) =>
                   (elt -> Maybe elt) -> (elt -> elt) -> EpochMilli -> [Revision k] -> elt -> set -> m (Maybe set, elt, [elt])
 reviseAndMerge scrub prep creationTime revs x store =
     if all isJust xs
@@ -214,7 +213,7 @@ reviseAndMerge scrub prep creationTime revs x store =
       xs = map scrub (toList (set @+ revs))
       set = getIxSet store
 
-create :: (MonadPlus m, Store set k elt s) => (elt ->Maybe elt) -> EpochMilli -> elt -> set -> m (set, elt)
+create :: (MonadPlus m, Store set k elt s, Show elt) => (elt ->Maybe elt) -> EpochMilli -> elt -> set -> m (set, elt)
 create scrub creationTime x store =
     let (store', i) = getNextId store in
     let x' = initialRevision i creationTime x in
@@ -227,7 +226,7 @@ create scrub creationTime x store =
 -- possible using the automatic threeWayMerge function.  Returns the
 -- new list of heads.  The modified store is returned only if changes
 -- were made.
-combineHeads :: forall m set k elt s. (MonadPlus m, Store set k elt s) =>
+combineHeads :: forall m set k elt s. (MonadPlus m, Store set k elt s, Show elt) =>
                 (elt -> Maybe elt) -> (elt -> elt) -> k -> EpochMilli -> set -> m (Maybe set, [elt])
 combineHeads scrub prep i creationTime set =
     merge False set (askTriplets scrub i set)
@@ -383,7 +382,7 @@ prune scrub i store =
 -- revision (by passing an empty parent list), revise a single item,
 -- or merge several items.  It can also be used to create a branch 
 -- by revising an element that already has children.
-replace1 :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt s) =>
+replace1 :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt s, Show elt) =>
             (elt -> Maybe elt) -> EpochMilli -> [Revision k] -> elt -> set -> m (set, elt)
 replace1 scrub creationTime parentRevs merged store =
     replace scrub creationTime parentRevs [merged] store >>=
@@ -392,7 +391,7 @@ replace1 scrub creationTime parentRevs merged store =
                   [merged''] -> return (store', merged'')
                   _ -> fail "Unexpected result from replace"
 
-replace1A :: forall f set k elt s. (Applicative f, Store set k elt s, Indexable elt s) =>
+replace1A :: forall f set k elt s. (Applicative f, Store set k elt s, Indexable elt s, Show elt) =>
             (elt -> Maybe elt) -> EpochMilli -> [Revision k] -> set -> elt -> f (set, elt)
 replace1A scrub creationTime parentRevs store merged =
     fmap finish (replaceA scrub creationTime parentRevs [merged] store)
@@ -401,7 +400,7 @@ replace1A scrub creationTime parentRevs store merged =
       finish _ = error "Unexpected result from replaceA"
 
 -- |Replace zero or more parents with zero or more children.
-replace :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt s) =>
+replace :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt s, Show elt) =>
            (elt -> Maybe elt) -> EpochMilli -> [Revision k] -> [elt] -> set -> m (set, [elt])
 replace scrub creationTime parentRevs children store =
     case parentIds ++ childIds of
@@ -413,7 +412,7 @@ replace scrub creationTime parentRevs children store =
       parentIds = map ident parentRevs
 
 -- |Replace zero or more parents with zero or more children.  Should be pure.
-replaceA :: forall f set k elt s. (Applicative f, Store set k elt s, Indexable elt s) =>
+replaceA :: forall f set k elt s. (Applicative f, Store set k elt s, Indexable elt s, Show elt) =>
            (elt -> Maybe elt) -> EpochMilli -> [Revision k] -> [elt] -> set -> f (set, [elt])
 replaceA scrub creationTime parentRevs children store =
     case parentIds ++ childIds of
@@ -427,7 +426,7 @@ replaceA scrub creationTime parentRevs children store =
 -- |This is the internal function that does the work for replace,
 -- replace1, and close.  This fails if we can't access any of the
 -- parents.
-replace' :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt s) =>
+replace' :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt s, Show elt) =>
             (elt -> Maybe elt) -> k -> EpochMilli -> [Revision k] -> [elt] -> set -> m (set, [elt])
 replace' scrub i creationTime parentRevs children store =
     case any isNothing parents of
@@ -469,7 +468,7 @@ replace' scrub i creationTime parentRevs children store =
 -- |This is the internal function that does the work for replace,
 -- replace1, and close.  This fails if we can't access any of the
 -- parents.  (This should be pure.)
-replaceA' :: forall f set k elt s. (Applicative f, Store set k elt s, Indexable elt s) =>
+replaceA' :: forall f set k elt s. (Applicative f, Store set k elt s, Indexable elt s, Show elt) =>
             (elt -> Maybe elt) -> k -> EpochMilli -> [Revision k] -> [elt] -> set -> f (set, [elt])
 replaceA' scrub i creationTime parentRevs children store =
     case any isNothing parents of
@@ -509,7 +508,7 @@ replaceA' scrub i creationTime parentRevs children store =
                 f x = x {nodeStatus = NonHead}
 
 -- |Close some revisions without creating any children.
-close :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt s) =>
+close :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt s, Show elt) =>
          (elt -> Maybe elt) -> [Revision k] -> set -> m (set)
 close scrub revs store = replace scrub 0 revs [] store >>= return . fst
 
@@ -545,10 +544,10 @@ _showTriplet (Triplet o l r) = "Triplet {o=" ++ (show . revision . getRevisionIn
                                ", l=" ++ (show . revision . getRevisionInfo $ l) ++
                                ", r=" ++ (show . revision . getRevisionInfo $ r) ++ "}"
 
-gshowSet :: (Ord a, Data a) => IxSet a -> String
+gshowSet :: (Ord a, Data a, Show a) => IxSet a -> String
 gshowSet s = gshowList (toList s)
-gshowList :: (Data a) => [a] -> [Char]
-gshowList l = "[" ++ intercalate ", " (map gshow l) ++ "]"
+gshowList :: (Data a, Show a) => [a] -> [Char]
+gshowList l = "[" ++ intercalate ", " (map show l) ++ "]"
 
 traceThis :: (a -> String) -> a -> a
 traceThis f x = trace (f x) x

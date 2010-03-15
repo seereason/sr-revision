@@ -1,6 +1,7 @@
 haskell-revision (0.1.2) unstable; urgency=low
 
   * Remove toConstr debugging code.
+  * Don't use gshow, it is prone to toConstr exceptions.
 
  -- David Fox <dsf@seereason.com>  Mon, 15 Mar 2010 11:55:54 -0700
 
