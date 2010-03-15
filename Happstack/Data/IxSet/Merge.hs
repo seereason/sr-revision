@@ -18,14 +18,6 @@ import qualified Data.Generics as G (geq)
 import Data.Text (Text)
 import Happstack.Data.IxSet.Triplets (GM, GA, GB, PM, PA, mkQ2, extQ2, extQ3, extT3, gzipQ3, gzipBut3, gzipButA3)
 
-import Debug.Trace
-toConstr1 x = toConstr $ trace "toConstr1" x
-toConstr2 x = toConstr $ trace "toConstr2" x
-toConstr3 x = toConstr $ trace "toConstr3" x
-toConstr4 x = toConstr $ trace "toConstr4" x
-toConstr5 x = toConstr $ trace "toConstr5" x
-toConstr6 x = toConstr $ trace "toConstr6" x
-
 twoOrThreeWayMerge :: forall m x. (MonadPlus m, Data x) => GM -> (Maybe x) -> x -> x -> m x
 twoOrThreeWayMerge _ Nothing _ _ = fail "Unimplemented: two way merge"
 twoOrThreeWayMerge continue (Just o) l r = threeWayMerge continue o l r
@@ -87,7 +79,7 @@ continueA o l r =
     (constrMatch `extQ3` stringFail `extQ3` bsFail `extQ3` textFail) o l r
     where
       constrMatch :: GB
-      constrMatch o l r = and [toConstr1 o == toConstr2 l, toConstr3 o == toConstr4 r]
+      constrMatch o l r = and [toConstr o == toConstr l, toConstr o == toConstr r]
       stringFail :: String -> String -> String -> Bool
       stringFail _ _ _ = {- trace "stringFail" -} False
       bsFail :: B.ByteString -> B.ByteString -> B.ByteString -> Bool
@@ -119,7 +111,7 @@ eqShallow a b =
       eq :: forall a. (Data a) => a -> a -> Bool
       eq a b = case dataTypeRep (dataTypeOf a) of
                  AlgRep _ | length (gmapQ (const ()) a) > 0 -> False
-                 _ -> toConstr5 a == toConstr6 b
+                 _ -> toConstr a == toConstr b
 
 stringEq :: String -> String -> Bool
 stringEq = (==)

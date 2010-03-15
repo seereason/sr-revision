@@ -41,10 +41,6 @@ import Happstack.State (EpochMilli)
 import Happstack.Data.IxSet.Revision.Current
 import Happstack.Data.IxSet.Revision.Instances()
 
-import Debug.Trace
-toConstr7 x = toConstr $ trace "toConstr7" x
-toConstr8 x = toConstr $ trace "toConstr8" x
-
 -- |Class of values that have a revision info.
 class (Typeable k, Enum k) => Revisable k a | a -> k where
     getRevisionInfo :: a -> RevisionInfo k
@@ -134,7 +130,7 @@ eqEx x y =
       -- will throw an exception if it encounters something with a
       -- NoRep type.
       geq :: (Data a, Data b) => a -> b -> Bool
-      geq x y = (toConstr7 x == toConstr8 y) && and (gzipWithQ eqEx x y)
+      geq x y = (toConstr x == toConstr y) && and (gzipWithQ eqEx x y)
       stringEq :: String -> String -> Bool
       stringEq a b = (a == b)
       textEq :: T.Text -> T.Text -> Bool

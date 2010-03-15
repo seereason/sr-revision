@@ -1,3 +1,9 @@
+haskell-revision (0.1.2) unstable; urgency=low
+
+  * Remove toConstr debugging code.
+
+ -- David Fox <dsf@seereason.com>  Mon, 15 Mar 2010 11:55:54 -0700
+
 haskell-revision (0.1.1) unstable; urgency=low
 
   * Extracted from happstack-extra.

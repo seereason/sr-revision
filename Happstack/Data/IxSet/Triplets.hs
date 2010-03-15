@@ -34,12 +34,6 @@ import Data.Maybe (fromMaybe)
 import Happstack.Data (deriveSerialize)
 import Happstack.State (Version)
 
-import Debug.Trace
-toConstr9 x = toConstr $ trace "toConstr9" x
-toConstr10 x = toConstr $ trace "toConstr10" x
-toConstr11 x = toConstr $ trace "toConstr11" x
-toConstr12 x = toConstr $ trace "toConstr12" x
-
 instance MonadPlus Failing where
     mzero = Failure []
     mplus (Failure xs) (Failure ys) = Failure (xs ++ ys)
@@ -202,7 +196,7 @@ gzip3 f = gzipBut3 f gzipQ3
 -- constructors must all match.
 gzipQ3 :: GM
 gzipQ3 x y z = 
-    if and [toConstr9 x == toConstr10 y, toConstr11 y == toConstr12 z]
+    if and [toConstr x == toConstr y, toConstr y == toConstr z]
     then return undefined
     else fail ("Conflict: x=" ++ gshow x ++ " y=" ++ gshow y ++ " z=" ++ gshow z)
 
