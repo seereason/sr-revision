@@ -42,7 +42,7 @@ import Control.Monad (MonadPlus(..))
 import Data.Data (Data)
 import Data.Function (on)
 import Data.List (tails, groupBy, sortBy, intercalate)
-import qualified Data.Map as M
+import qualified Data.Map as Map
 import qualified Data.Set as Set
 import Data.Maybe (catMaybes, isJust, isNothing)
 import Data.Typeable (Typeable)
@@ -66,8 +66,8 @@ class (Ord k, Eq k, Typeable k, Enum k, Default k, Show k, Revisable k elt,
       Store set k elt s | set -> elt, set -> s where
     getMaxId :: set -> k
     putMaxId :: k -> set -> set
-    getMaxRevs :: set -> M.Map k Integer
-    putMaxRevs :: M.Map k Integer -> set -> set
+    getMaxRevs :: set -> Map.Map k Integer
+    putMaxRevs :: Map.Map k Integer -> set -> set
     getIxSet :: set -> IxSet elt
     putIxSet :: IxSet elt -> set -> set
 
@@ -94,12 +94,12 @@ getNextRev x set =
 -- |Set the maximum revision number for an Ident.  FIXME - we need a
 -- safer way to increase and use the max rev, like getNextId
 putMaxRev :: Store set k elt s => k -> Integer -> set -> set
-putMaxRev ident rev s = putMaxRevs (M.insert ident rev (getMaxRevs s)) s
+putMaxRev ident rev s = putMaxRevs (Map.insert ident rev (getMaxRevs s)) s
 
 -- |Get the maximum revision number in the store for an ident.
 getMaxRev :: forall set k elt s. (Store set k elt s, Revisable k elt) => k -> set -> Integer
 getMaxRev ident s = 
-    maybe getMaxRev' id (M.lookup ident (getMaxRevs s))
+    maybe getMaxRev' id (Map.lookup ident (getMaxRevs s))
     where
       -- If there is no entry for this ident we have to look at all
       -- the revisions in the database for this ident.  This could be
