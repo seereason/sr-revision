@@ -10,7 +10,7 @@
 module Happstack.Data.IxSet.Store
     ( Store(..)
     , Triplet(..)
-    , getNextId
+    , newId
     , getNextRev
     -- , getMaxRev
     -- , putMaxRev
@@ -64,19 +64,15 @@ import Debug.Trace
 class (Ord k, Eq k, Typeable k, Enum k, Default k, Show k, Revisable k elt,
        Indexable elt s, Data elt, Ord elt, Default elt) =>
       Store set k elt s | set -> elt, set -> s where
-    getMaxId :: set -> k
-    putMaxId :: k -> set -> set
+    getNextId :: set -> k
+    putNextId :: k -> set -> set
     getMaxRevs :: set -> Map.Map k Integer
     putMaxRevs :: Map.Map k Integer -> set -> set
     getIxSet :: set -> IxSet elt
     putIxSet :: IxSet elt -> set -> set
 
-getNextId :: (Store set k elt s) => set -> (set, k)
-getNextId x = 
-    (putMaxId newId x, newId)
-    where
-      newId = succ oldId
-      oldId = getMaxId x
+newId :: (Store set k elt s) => set -> (set, k)
+newId s = (putNextId (succ (getNextId s)) s, getNextId s)
 
 -- |Allocate a new revision number to elt, and update the set to
 -- reflect the new maximum revision number.
@@ -215,7 +211,7 @@ reviseAndMerge scrub prep creationTime revs x store =
 
 create :: (MonadPlus m, Store set k elt s, Show elt) => (elt ->Maybe elt) -> EpochMilli -> elt -> set -> m (set, elt)
 create scrub creationTime x store =
-    let (store', i) = getNextId store in
+    let (store', i) = newId store in
     let x' = initialRevision i creationTime x in
     replace scrub creationTime [] [x'] store' >>=
             \ (store'', xs) -> case xs of

@@ -1,3 +1,10 @@
+haskell-revision (0.2.0) unstable; urgency=low
+
+  * Rename getNextId -> newId
+  * Rename class methods getMaxId -> getNextId, putMaxId -> putNextId
+
+ -- David Fox <dsf@seereason.com>  Sun, 21 Mar 2010 17:17:59 -0700
+
 haskell-revision (0.1.2) unstable; urgency=low
 
   * Remove toConstr debugging code.
