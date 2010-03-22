@@ -47,8 +47,8 @@ import qualified Data.Set as Set
 import Data.Maybe (catMaybes, isJust, isNothing)
 import Data.Typeable (Typeable)
 import Happstack.Data (deriveSerialize, Default(..), deriveAll)
-import Happstack.Data.IxSet (Indexable(..), IxSet(..), (@=), (@+), toList, fromList, delete, insert, null, size, toSet, fromSet)
-import Happstack.Data.IxSet.Merge (threeWayMerge, continue, threeWayMergeA, continueA)
+import Happstack.Data.IxSet (Indexable(..), IxSet(..), (@=), (@+), toList, fromList, delete, null, size, toSet, fromSet)
+import Happstack.Data.IxSet.Merge (threeWayMerge, continue)
 import Happstack.Data.IxSet.POSet (commonAncestor)
 import Happstack.Data.IxSet.Revision (Revisable(getRevisionInfo, putRevisionInfo), initialRevision,
                                       RevisionInfo(RevisionInfo, created, revision, parentRevisions),
@@ -90,7 +90,7 @@ getNextRev x set =
 -- |Set the maximum revision number for an Ident.  FIXME - we need a
 -- safer way to increase and use the max rev, like getNextId
 putMaxRev :: Store set k elt s => k -> Integer -> set -> set
-putMaxRev ident rev s = putMaxRevs (Map.insert ident rev (getMaxRevs s)) s
+putMaxRev i rev s = putMaxRevs (Map.insert i rev (getMaxRevs s)) s
 
 -- |Get the maximum revision number in the store for an ident.
 getMaxRev :: forall set k elt s. (Store set k elt s, Revisable k elt) => k -> set -> Integer
@@ -233,12 +233,12 @@ combineHeads scrub prep i creationTime set =
           return (if merged then Just set else Nothing, heads)
           where heads = toList ((getIxSet set @= i) @= Head)
       -- Try to merge each of the triplets in turn
-      merge merged set (Just (Triplet o l r) : more) =
+      merge _merged set (Just (Triplet o l r) : _more) =
           threeWayMerge continue (prep' o) (prep' l) (prep' r) >>=
             \ m -> replace1 scrub creationTime [lrev, rrev] m set >>=
             \ (set', _) -> merge True set' (askTriplets scrub i set')
           where
-            orev = revision (getRevisionInfo o)
+            _orev = revision (getRevisionInfo o)
             lrev = revision (getRevisionInfo l)
             rrev = revision (getRevisionInfo r)
       -- Permission failure
@@ -249,7 +249,7 @@ combineHeads scrub prep i creationTime set =
 
 combineHeadsA :: forall f set k elt s. (Applicative f, Store set k elt s) =>
                 (elt -> Maybe elt) -> (elt -> elt) -> k -> EpochMilli -> set -> f (Maybe set, [elt])
-combineHeadsA scrub prep i creationTime set =
+combineHeadsA scrub prep i _creationTime set =
     merge False set (askTriplets scrub i set)
     where
       -- No triplets left to merge, return the finalized list of heads
@@ -258,7 +258,7 @@ combineHeadsA scrub prep i creationTime set =
           pure (if merged then Just set else Nothing, heads)
           where heads = toList ((getIxSet set @= i) @= Head)
       -- Try to merge each of the triplets in turn
-      merge merged set (Just (Triplet o l r) : more) =
+      merge _merged _set (Just (Triplet o l r) : _more) =
           undefined
 {-
           twoOrThreeWayMerge continue (fmap prep' o) (prep' l) (prep' r) >>=
@@ -266,16 +266,17 @@ combineHeadsA scrub prep i creationTime set =
             \ (set', _) -> merge True set' (askTriplets scrub i set')
 -}
           where
-            orev = revision (getRevisionInfo o)
-            lrev = revision (getRevisionInfo l)
-            rrev = revision (getRevisionInfo r)
+            _orev = revision (getRevisionInfo o)
+            _lrev = revision (getRevisionInfo l)
+            _rrev = revision (getRevisionInfo r)
       -- Permission failure
 {-    merge _ _ (Just (Triplet _ l r) : _) =
           error ("combineHeads: missing ancestor of " ++ show [getRevisionInfo l, getRevisionInfo r]) -}
       merge merged set (Nothing : more) = merge merged set more
-      prep' = clearRev . prep
+      _prep' = clearRev . prep
 
-conflict = undefined
+_conflict :: forall a. a
+_conflict = undefined
 
 clearRev :: forall k a. (Revisable k a, Default k) => a -> a
 clearRev x =
@@ -540,13 +541,13 @@ _showTriplet (Triplet o l r) = "Triplet {o=" ++ (show . revision . getRevisionIn
                                ", l=" ++ (show . revision . getRevisionInfo $ l) ++
                                ", r=" ++ (show . revision . getRevisionInfo $ r) ++ "}"
 
-gshowSet :: (Ord a, Data a, Show a) => IxSet a -> String
-gshowSet s = gshowList (toList s)
-gshowList :: (Data a, Show a) => [a] -> [Char]
-gshowList l = "[" ++ intercalate ", " (map show l) ++ "]"
+_gshowSet :: (Ord a, Data a, Show a) => IxSet a -> String
+_gshowSet s = _gshowList (toList s)
+_gshowList :: (Data a, Show a) => [a] -> [Char]
+_gshowList l = "[" ++ intercalate ", " (map show l) ++ "]"
 
-traceThis :: (a -> String) -> a -> a
-traceThis f x = trace (f x) x
+_traceThis :: (a -> String) -> a -> a
+_traceThis f x = trace (f x) x
 
 allEqual :: Eq a => [a] -> Bool
 allEqual (x : more) = all (\ y -> x == y) more
