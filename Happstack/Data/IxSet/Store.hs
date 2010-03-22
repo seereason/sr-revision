@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable, FlexibleContexts, FlexibleInstances, FunctionalDependencies, MultiParamTypeClasses,
              ScopedTypeVariables, StandaloneDeriving, TemplateHaskell, UndecidableInstances #-}
-{-# OPTIONS -fno-warn-orphans #-}
+{-# OPTIONS -fno-warn-orphans -fno-warn-name-shadowing #-}
 -- |These are the pure operations on Store instances, which are
 -- typically IxSets of Revisable objects used in a Happstack database.
 -- Each element has an Ident, which is stored in a Revision object
@@ -94,15 +94,15 @@ putMaxRev i rev s = putMaxRevs (Map.insert i rev (getMaxRevs s)) s
 
 -- |Get the maximum revision number in the store for an ident.
 getMaxRev :: forall set k elt s. (Store set k elt s, Revisable k elt) => k -> set -> Integer
-getMaxRev ident s = 
-    maybe getMaxRev' id (Map.lookup ident (getMaxRevs s))
+getMaxRev i s = 
+    maybe getMaxRev' id (Map.lookup i (getMaxRevs s))
     where
       -- If there is no entry for this ident we have to look at all
       -- the revisions in the database for this ident.  This could be
       -- expensive, but it is only needed once, and only for stores
       -- that were created before this max revision code was added.
       getMaxRev' :: Integer
-      getMaxRev' = foldr f 0 (toList (getIxSet s @= ident))
+      getMaxRev' = foldr f 0 (toList (getIxSet s @= i))
       f :: elt -> Integer -> Integer
       f x rev = max rev (number . revision . getRevisionInfo $ x)
 
