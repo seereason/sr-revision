@@ -47,7 +47,7 @@ import qualified Data.Set as Set
 import Data.Maybe (catMaybes, isJust, isNothing)
 import Data.Typeable (Typeable)
 import Happstack.Data (deriveSerialize, Default(..), deriveAll)
-import Happstack.Data.IxSet (Indexable(..), IxSet(..), (@=), (@+), toList, fromList, delete, null, size, toSet, fromSet)
+import Happstack.Data.IxSet (Indexable(..), IxSet(..), (@=), (@+), toList, fromList, delete, insert, null, size, toSet, fromSet)
 import Happstack.Data.IxSet.Merge (threeWayMerge, continue)
 import Happstack.Data.IxSet.POSet (commonAncestor)
 import Happstack.Data.IxSet.Revision (Revisable(getRevisionInfo, putRevisionInfo), initialRevision,
@@ -541,10 +541,10 @@ _showTriplet (Triplet o l r) = "Triplet {o=" ++ (show . revision . getRevisionIn
                                ", l=" ++ (show . revision . getRevisionInfo $ l) ++
                                ", r=" ++ (show . revision . getRevisionInfo $ r) ++ "}"
 
-_gshowSet :: (Ord a, Data a, Show a) => IxSet a -> String
-_gshowSet s = _gshowList (toList s)
-_gshowList :: (Data a, Show a) => [a] -> [Char]
-_gshowList l = "[" ++ intercalate ", " (map show l) ++ "]"
+gshowSet :: (Ord a, Data a, Show a) => IxSet a -> String
+gshowSet s = gshowList (toList s)
+gshowList :: (Data a, Show a) => [a] -> [Char]
+gshowList l = "[" ++ intercalate ", " (map show l) ++ "]"
 
 _traceThis :: (a -> String) -> a -> a
 _traceThis f x = trace (f x) x
