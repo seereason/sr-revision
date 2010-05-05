@@ -12,7 +12,7 @@ Exposed-Modules:  Happstack.Data.IxSet.POSet, Happstack.Data.IxSet.Revision, Hap
 		  Happstack.Data.IxSet.Store, Happstack.Data.IxSet.Triplets, Happstack.Data.IxSet.Extra
                   
 Build-Depends:    base >= 4, containers, mtl, syb, syb-with-class, text, bytestring, applicative-extras,
-                  happstack-data, happstack-state, happstack-ixset
+                  happstack-data, happstack-state, happstack-ixset, HUnit
 
 Build-Type:       Simple
 Category:         Web, Language
