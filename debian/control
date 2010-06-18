@@ -26,8 +26,8 @@ Build-Depends-Indep: ghc6-doc,
                      haskell-happstack-state-doc,
                      libghc6-mtl-doc,
                      libghc6-hunit-doc,
-                     libghc6-syb-doc | haskell-syb-doc,
-                     haskell-syb-with-class-doc,
+                     libghc6-syb-doc,
+                     libghc6-syb-with-class-doc,
                      haskell-text-doc,
                      libghc6-utf8-string-doc
 Build-Conflicts: libghc6-happstack-extra-dev (<< 0.87)
