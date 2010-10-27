@@ -62,7 +62,7 @@ import Debug.Trace
 -- FIXME: We probably don't need all this context, particularly Show k, but
 -- it means adding Show k to the context of most of the functions below.
 class (Ord k, Eq k, Typeable k, Enum k, Default k, Show k, Revisable k elt,
-       Indexable elt s, Data elt, Ord elt, Default elt) =>
+       Indexable elt, Data elt, Ord elt, Default elt) =>
       Store set k elt s | set -> elt, set -> s where
     getNextId :: set -> k
     putNextId :: k -> set -> set
@@ -379,7 +379,7 @@ prune scrub i store =
 -- revision (by passing an empty parent list), revise a single item,
 -- or merge several items.  It can also be used to create a branch 
 -- by revising an element that already has children.
-replace1 :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt s, Show elt) =>
+replace1 :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt, Show elt) =>
             (elt -> Maybe elt) -> EpochMilli -> [Revision k] -> elt -> set -> m (set, elt)
 replace1 scrub creationTime parentRevs merged store =
     replace scrub creationTime parentRevs [merged] store >>=
@@ -388,7 +388,7 @@ replace1 scrub creationTime parentRevs merged store =
                   [merged''] -> return (store', merged'')
                   _ -> fail "Unexpected result from replace"
 
-replace1A :: forall f set k elt s. (Applicative f, Store set k elt s, Indexable elt s, Show elt) =>
+replace1A :: forall f set k elt s. (Applicative f, Store set k elt s, Indexable elt, Show elt) =>
             (elt -> Maybe elt) -> EpochMilli -> [Revision k] -> set -> elt -> f (set, elt)
 replace1A scrub creationTime parentRevs store merged =
     fmap finish (replaceA scrub creationTime parentRevs [merged] store)
@@ -397,7 +397,7 @@ replace1A scrub creationTime parentRevs store merged =
       finish _ = error "Unexpected result from replaceA"
 
 -- |Replace zero or more parents with zero or more children.
-replace :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt s, Show elt) =>
+replace :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt, Show elt) =>
            (elt -> Maybe elt) -> EpochMilli -> [Revision k] -> [elt] -> set -> m (set, [elt])
 replace scrub creationTime parentRevs children store =
     case parentIds ++ childIds of
@@ -409,7 +409,7 @@ replace scrub creationTime parentRevs children store =
       parentIds = map ident parentRevs
 
 -- |Replace zero or more parents with zero or more children.  Should be pure.
-replaceA :: forall f set k elt s. (Applicative f, Store set k elt s, Indexable elt s, Show elt) =>
+replaceA :: forall f set k elt s. (Applicative f, Store set k elt s, Indexable elt, Show elt) =>
            (elt -> Maybe elt) -> EpochMilli -> [Revision k] -> [elt] -> set -> f (set, [elt])
 replaceA scrub creationTime parentRevs children store =
     case parentIds ++ childIds of
@@ -423,7 +423,7 @@ replaceA scrub creationTime parentRevs children store =
 -- |This is the internal function that does the work for replace,
 -- replace1, and close.  This fails if we can't access any of the
 -- parents.
-replace' :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt s, Show elt) =>
+replace' :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt, Show elt) =>
             (elt -> Maybe elt) -> k -> EpochMilli -> [Revision k] -> [elt] -> set -> m (set, [elt])
 replace' scrub i creationTime parentRevs children store =
     case any isNothing parents of
@@ -465,7 +465,7 @@ replace' scrub i creationTime parentRevs children store =
 -- |This is the internal function that does the work for replace,
 -- replace1, and close.  This fails if we can't access any of the
 -- parents.  (This should be pure.)
-replaceA' :: forall f set k elt s. (Applicative f, Store set k elt s, Indexable elt s, Show elt) =>
+replaceA' :: forall f set k elt s. (Applicative f, Store set k elt s, Indexable elt, Show elt) =>
             (elt -> Maybe elt) -> k -> EpochMilli -> [Revision k] -> [elt] -> set -> f (set, [elt])
 replaceA' scrub i creationTime parentRevs children store =
     case any isNothing parents of
@@ -505,7 +505,7 @@ replaceA' scrub i creationTime parentRevs children store =
                 f x = x {nodeStatus = NonHead}
 
 -- |Close some revisions without creating any children.
-close :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt s, Show elt) =>
+close :: forall m set k elt s. (MonadPlus m, Store set k elt s, Indexable elt, Show elt) =>
          (elt -> Maybe elt) -> [Revision k] -> set -> m (set)
 close scrub revs store = replace scrub 0 revs [] store >>= return . fst
 
@@ -559,5 +559,5 @@ _traceRevs :: (Revisable k a, Show k) => String -> [a] -> [a]
 _traceRevs prefix xs = trace (prefix ++ show (map getRevisionInfo xs)) xs
 
 -- | Takes the intersection of the two IxSets
-difference :: (Ord a, Data a, Indexable a b) => IxSet a -> IxSet a -> IxSet a
+difference :: (Ord a, Data a, Indexable a) => IxSet a -> IxSet a -> IxSet a
 difference x1 x2 = fromSet $ Set.difference (toSet x1) (toSet x2)

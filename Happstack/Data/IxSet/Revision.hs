@@ -52,7 +52,7 @@ copyRev s d = putRevisionInfo (getRevisionInfo s) d
 changeRevisionInfo :: Revisable k a => (RevisionInfo k -> RevisionInfo k) -> a -> a
 changeRevisionInfo f x = putRevisionInfo (f (getRevisionInfo x)) x
 
-instance (Ord a, Data a, Revisable k a, Indexable a b) => POSet (IxSet a) a where
+instance (Ord a, Data a, Revisable k a, Indexable a) => POSet (IxSet a) a where
     parents s a =
         concatMap get (parentRevisions (getRevisionInfo a))
         where get n = toList (s @+ [(revision (getRevisionInfo a)) {number = n}])
@@ -69,7 +69,7 @@ initialRevision newID creationTime x =
 -- and (3) not common ancestors of heads.  This is a garbage collector
 -- for a simple revision control system.  However, you can't use unless
 -- you know there are no pending revisions out there waiting to happen.
-prune :: forall k a. forall b. (Typeable k, Ord a, Data a, Revisable k a, Indexable a b) => IxSet a -> IxSet a -> IxSet a
+prune :: forall k a. forall b. (Typeable k, Ord a, Data a, Revisable k a, Indexable a) => IxSet a -> IxSet a -> IxSet a
 prune s all =
     foldr remove (foldr reParent all reparentPairs) (S.toList victims)
     where
@@ -90,7 +90,7 @@ prune s all =
 type Heads a = Maybe (Either a [(a, a, a)])
 
 -- |Return the current value of a Revisable.
-heads :: (Show k, Typeable k, Ord a, Data a, Revisable k a, Indexable a b) => IxSet a ->  Heads a
+heads :: (Show k, Typeable k, Ord a, Data a, Revisable k a, Indexable a) => IxSet a ->  Heads a
 heads s =
     case toList (s @= Head) of
       [] -> Nothing
