@@ -16,9 +16,7 @@ Build-Depends:    base >= 4, containers, mtl, syb, syb-with-class, text, bytestr
 
 Build-Type:       Simple
 Category:         Web, Language
-Extensions:             MultiParamTypeClasses,
-                        TypeFamilies,
-                        FlexibleContexts,
+Extensions:             FlexibleContexts,
                         FlexibleInstances,
                         TypeSynonymInstances,
                         OverlappingInstances,
