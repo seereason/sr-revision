@@ -7,7 +7,7 @@
 -- along with an integer revision number.  There is also bookkeeping
 -- storage to record the largest Ident in the store, and a map from
 -- Ident to the largest revision number for that Ident.
-module Happstack.Data.IxSet.Store
+module Data.IxSet.Store
     ( Store(..)
     , Triplet(..)
     , newId
@@ -47,10 +47,10 @@ import qualified Data.Set as Set
 import Data.Maybe (catMaybes, isJust, isNothing)
 import Data.Typeable (Typeable)
 import Happstack.Data (deriveSerialize, Default(..), deriveAll)
-import Happstack.Data.IxSet (Indexable(..), IxSet(..), (@=), (@+), toList, fromList, delete, insert, null, size, toSet, fromSet)
-import Happstack.Data.IxSet.Merge (threeWayMerge, continue)
-import Happstack.Data.IxSet.POSet (commonAncestor)
-import Happstack.Data.IxSet.Revision (Revisable(getRevisionInfo, putRevisionInfo), initialRevision,
+import Data.IxSet (Indexable(..), IxSet(..), (@=), (@+), toList, fromList, delete, insert, null, size, toSet, fromSet)
+import Data.IxSet.Merge (threeWayMerge, continue)
+import Data.IxSet.POSet (commonAncestor)
+import Data.IxSet.Revision (Revisable(getRevisionInfo, putRevisionInfo), initialRevision,
                                       RevisionInfo(RevisionInfo, created, revision, parentRevisions),
                                       Revision(ident, number), NodeStatus(Head, NonHead), nodeStatus)
 import Happstack.State (EpochMilli, Version)

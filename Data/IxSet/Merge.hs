@@ -1,6 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables, Rank2Types #-}
 {-# OPTIONS -Wwarn #-}
-module Happstack.Data.IxSet.Merge
+module Data.IxSet.Merge
     ( threeWayMerge
     , twoOrThreeWayMerge
     , continue
@@ -16,7 +16,7 @@ import Data.Data (Data, toConstr)
 import Data.Generics (DataRep(AlgRep), dataTypeRep, dataTypeOf, gmapQ, extQ, gshow)
 import qualified Data.Generics as G (geq)
 import Data.Text (Text)
-import Happstack.Data.IxSet.Triplets (GM, GA, GB, PM, PA, mkQ2, extQ2, extQ3, extT3, gzipQ3, gzipBut3, gzipButA3)
+import Data.IxSet.Triplets (GM, GA, GB, PM, PA, mkQ2, extQ2, extQ3, extT3, gzipQ3, gzipBut3, gzipButA3)
 
 twoOrThreeWayMerge :: forall m x. (MonadPlus m, Data x) => GM -> (Maybe x) -> x -> x -> m x
 twoOrThreeWayMerge _ Nothing _ _ = fail "Unimplemented: two way merge"

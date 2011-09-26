@@ -10,8 +10,8 @@ import Control.Monad (MonadPlus(..))
 import qualified Data.ByteString.UTF8 as B
 import Data.Generics (Data, gshow, GenericQ, GenericM)
 import Data.List (intercalate)
-import Happstack.Data.IxSet.Merge
-import Happstack.Data.IxSet.Triplets (GM, GA, GB, gzipQ3, extQ3, mkQ3)
+import Data.IxSet.Merge
+import Data.IxSet.Triplets (GM, GA, GB, gzipQ3, extQ3, mkQ3)
 import Test.HUnit
 --import Debug.Trace
 

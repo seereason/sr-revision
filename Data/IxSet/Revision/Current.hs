@@ -2,7 +2,7 @@
              MultiParamTypeClasses, RankNTypes, ScopedTypeVariables, TemplateHaskell,
              UndecidableInstances #-}
 {-# OPTIONS -fno-warn-orphans -Wwarn #-}
-module Happstack.Data.IxSet.Revision.Current
+module Data.IxSet.Revision.Current
     ( Ident(..)
     , Revision(..)
     , RevisionInfo(..)

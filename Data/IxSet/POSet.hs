@@ -4,7 +4,7 @@
 -- multiple parents, and forking them creates nodes with multiple
 -- children, but thankfully there is no way I can think of to create a
 -- cycle.
-module Happstack.Data.IxSet.POSet 
+module Data.IxSet.POSet 
     ( POSet(..)
     , commonAncestor
     , commonAncestors

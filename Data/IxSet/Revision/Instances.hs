@@ -1,11 +1,11 @@
 {-# LANGUAGE DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses, RankNTypes, TemplateHaskell #-}
 {-# OPTIONS -fno-warn-orphans #-}
-module Happstack.Data.IxSet.Revision.Instances where
+module Data.IxSet.Revision.Instances where
 
 import Data.Generics
 import Happstack.Data (Version(..), Proxy(..), Mode(..), proxy, extension, deriveSerialize, Migrate(..))
-import qualified Happstack.Data.IxSet.Revision.Old1 as O1
-import qualified Happstack.Data.IxSet.Revision.Current as C
+import qualified Data.IxSet.Revision.Old1 as O1
+import qualified Data.IxSet.Revision.Current as C
 
 
 ---------------

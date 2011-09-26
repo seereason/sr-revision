@@ -1,6 +1,6 @@
 {-# LANGUAGE RankNTypes, ScopedTypeVariables, TemplateHaskell #-}
 {-# OPTIONS -Wwarn #-}
-module Happstack.Data.IxSet.Triplets
+module Data.IxSet.Triplets
     ( gzipWithM3
     , gzipWithT3
     , gzipWithA3

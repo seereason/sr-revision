@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
-module Happstack.Data.IxSet.Extra 
+module Data.IxSet.Extra 
     ( testAndInsert
     , difference
     )
@@ -8,8 +8,7 @@ module Happstack.Data.IxSet.Extra
 import Control.Monad.State
 import Data.Generics
 import qualified Data.Set as Set
---import Happstack.Data
-import Happstack.Data.IxSet
+import Data.IxSet
 
 -- |perform insert only if test is True
 testAndInsert :: (Indexable a,

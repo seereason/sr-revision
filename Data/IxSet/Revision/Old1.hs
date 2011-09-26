@@ -1,9 +1,9 @@
 {-# LANGUAGE DeriveDataTypeable, FlexibleContexts, FlexibleInstances, MultiParamTypeClasses, TemplateHaskell, UndecidableInstances #-}
-module Happstack.Data.IxSet.Revision.Old1 where
+module Data.IxSet.Revision.Old1 where
 
 import Data.Generics
 import Happstack.Data
-import Happstack.Data.IxSet.Revision.Current (Ident, NodeStatus)
+import Data.IxSet.Revision.Current (Ident, NodeStatus)
 import Happstack.State (EpochMilli)
 
 -- | The information associated with a revision to record its status.

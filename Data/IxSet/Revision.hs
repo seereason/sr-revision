@@ -2,7 +2,7 @@
              MultiParamTypeClasses, RankNTypes, ScopedTypeVariables, TemplateHaskell,
              UndecidableInstances #-}
 {-# OPTIONS -fno-warn-orphans -Wwarn #-}
-module Happstack.Data.IxSet.Revision
+module Data.IxSet.Revision
     ( Ident(..)
     , Revision(..)
     , RevisionInfo(..)
@@ -13,7 +13,7 @@ module Happstack.Data.IxSet.Revision
     , initialRevision
     -- , merge
     -- , revise
-    , Happstack.Data.IxSet.Revision.prune
+    , Data.IxSet.Revision.prune
     , Heads
     , heads
     -- , combine
@@ -33,13 +33,13 @@ import Data.List (tails, intercalate)
 import qualified Data.Set as S
 import qualified Data.Text as T
 --import Happstack.Data (Default(..), deriveNewData, deriveNewDataNoDefault, deriveSerialize, Migrate(..))
-import Happstack.Data.IxSet
-import Happstack.Data.IxSet.POSet
-import qualified Happstack.Data.IxSet.POSet as P
-import Happstack.Data.IxSet.Triplets (mergeBy, {-mergeByM,-} mkQ2, extQ2, gzipBut3, GM)
+import Data.IxSet
+import Data.IxSet.POSet
+import qualified Data.IxSet.POSet as P
+import Data.IxSet.Triplets (mergeBy, {-mergeByM,-} mkQ2, extQ2, gzipBut3, GM)
 import Happstack.State (EpochMilli)
-import Happstack.Data.IxSet.Revision.Current
-import Happstack.Data.IxSet.Revision.Instances()
+import Data.IxSet.Revision.Current
+import Data.IxSet.Revision.Instances()
 
 -- |Class of values that have a revision info.
 class (Typeable k, Enum k) => Revisable k a | a -> k where

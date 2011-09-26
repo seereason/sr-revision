@@ -3,7 +3,7 @@ module Test.POSet
     ( tests
     ) where
 
-import Happstack.Data.IxSet.POSet
+import Data.IxSet.POSet
 import Test.HUnit
 import qualified Data.Set as S
 

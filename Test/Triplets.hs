@@ -6,7 +6,7 @@ module Test.Triplets
 
 import Control.Applicative.Error
 import Control.Monad (MonadPlus(..))
-import Happstack.Data.IxSet.Triplets
+import Data.IxSet.Triplets
 import Data.Generics (Data, geq, gshow)
 import Data.List (intercalate)
 import Test.HUnit
