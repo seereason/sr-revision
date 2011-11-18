@@ -1,3 +1,4 @@
+-- | Merging of revisions.
 {-# LANGUAGE ScopedTypeVariables, Rank2Types #-}
 {-# OPTIONS -Wwarn #-}
 module Data.IxSet.Merge

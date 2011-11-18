@@ -15,7 +15,9 @@ import qualified Data.Generics.SYB.WithClass.Context as N
 import Happstack.Data (Default(..), deriveNewData, deriveNewDataNoDefault, deriveAll)
 import Happstack.State (EpochMilli)
 
--- | Identifier for a item which can have multiple revisions.
+-- | Identifier for a item which can have multiple revisions.  This is
+-- an example of a type that could be used as the @k@ type of
+-- @RevisionInfo k@.
 newtype Ident
     = Ident {unIdent :: Integer}
     deriving (Eq, Ord, Read, Show, Data, Typeable)
@@ -24,20 +26,31 @@ instance Enum Ident where
     toEnum = Ident . toInteger
     fromEnum = fromInteger . unIdent
 
+$(deriveNewData [''Ident])
+
+-- | Each node of the revision graph is either a @Head@, which means
+-- it is a "current" revision and not the parent of any other node, or
+-- @NonHead@ which means some other revision is newer.
 data NodeStatus = Head | NonHead deriving (Eq, Ord, Read, Show, Data, Typeable)
 
--- | Identifier for a particular revision of a particular item.
-data Enum k => Revision k
-    = Revision {ident :: k, number :: Integer}
-    deriving (Eq, Ord, Read, Data, Typeable)
+$(deriveNewData [''NodeStatus])
 
--- | The information associated with a revision to record its status.
+-- | 'RevisionInfo' holds all the information associated with a
+-- | particular revision of a value.
 data Enum k => RevisionInfo k
     = RevisionInfo 
-      { revision :: Revision k
-      , created :: EpochMilli
-      , parentRevisions :: [Integer]
-      , nodeStatus :: NodeStatus}
+      { revision :: Revision k -- ^ Contains the value identifier and the sequence number of the revision.
+      , created :: EpochMilli  -- ^ The time at which the revision was created
+      , parentRevisions :: [Integer] -- ^ The revision numbers from which this revision was derived.
+      , nodeStatus :: NodeStatus -- ^ A revision has status NonHead if it is the parent of any other revision
+      } deriving (Eq, Ord, Read, Data, Typeable)
+
+-- | 'Revision' Identifier for a particular revision of a particular item.
+data Enum k => Revision k
+    = Revision
+      { ident :: k        -- ^ Identifier common to all the revisions of this value.
+      , number :: Integer -- ^ A sequence number assigned to this particular revision
+      }
     deriving (Eq, Ord, Read, Data, Typeable)
 
 instance (Enum k, Show k) => Show (RevisionInfo k) where
@@ -48,8 +61,6 @@ instance (Enum k, Show k) => Show (RevisionInfo k) where
 
 instance (Enum k, Show k) => Show (Revision k) where
     show r = show (ident r) ++ "." ++ show (number r)
-
-$(deriveNewData [''Ident, ''NodeStatus])
 
 instance (Enum k, Default k) => Default (Revision k) where
     defaultValue = Revision {ident = defaultValue, number = 1}

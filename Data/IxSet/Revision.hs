@@ -1,13 +1,28 @@
+-- | Suppose you have a data value which two or more users are editing
+-- (and thus creating revised versions of.)  If two users revise the
+-- value based on the same original, these two values may need to be
+-- merged so that both user's changes are included in the result.
+-- This operation is called "three way merging, where the final value
+-- based on the original and the two edited versions.
+-- 
+-- We can create a graph to represent the history of revisions and
+-- merged of the value.  Each node represents a revision of the value,
+-- and each arcs is drawn from one revision to the revision resulting
+-- from a single edit.  When a merge operation is done there will be a
+-- node with incoming arcs from the two values that were merged.
+-- 
+-- This graph is a lattice, or partially ordered set.  This module
+-- includes support for managing the set of revisions.
 {-# LANGUAGE DeriveDataTypeable, FlexibleContexts, FlexibleInstances, FunctionalDependencies,
              MultiParamTypeClasses, RankNTypes, ScopedTypeVariables, TemplateHaskell,
              UndecidableInstances #-}
 {-# OPTIONS -fno-warn-orphans -Wwarn #-}
 module Data.IxSet.Revision
-    ( Ident(..)
-    , Revision(..)
-    , RevisionInfo(..)
-    , changeRevisionInfo
+    ( RevisionInfo(..)
     , Revisable(..)
+    , Ident(..)
+    , Revision(..)
+    , changeRevisionInfo
     , NodeStatus(..)
     , copyRev
     , initialRevision
@@ -41,7 +56,10 @@ import Happstack.State (EpochMilli)
 import Data.IxSet.Revision.Current
 import Data.IxSet.Revision.Instances()
 
--- |Class of values that have a revision info.
+-- |If we want to do revision management for a type @a@, we first
+-- create an instance of 'Revisable' for that type.  We also need a
+-- type @k@ which defines the set of revisions for a value.  The class
+-- has methods to get and set a value's 'RevisionInfo'.
 class (Typeable k, Enum k) => Revisable k a | a -> k where
     getRevisionInfo :: a -> RevisionInfo k
     putRevisionInfo :: RevisionInfo k -> a -> a
