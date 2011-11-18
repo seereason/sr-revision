@@ -1,3 +1,9 @@
+haskell-revision (0.3) unstable; urgency=low
+
+  * Change doc package name prefix to libghc.
+
+ -- David Fox <dsf@seereason.com>  Fri, 18 Nov 2011 09:25:25 -0800
+
 haskell-revision (0.2.1) unstable; urgency=low
 
   * Switch dependency from happstack-ixset to ixset.

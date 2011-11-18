@@ -60,7 +60,7 @@ Description: Modules for revision control and merging
  .
  This package contains the libraries compiled with profiling enabled.
 
-Package: haskell-revision-doc
+Package: libghc-revision-doc
 Architecture: all
 Section: doc
 Depends: ${haskell:Depends},
