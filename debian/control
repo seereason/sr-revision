@@ -66,7 +66,9 @@ Section: doc
 Depends: ${haskell:Depends},
          ${misc:Depends},
          ghc-doc
-Conflicts: haskell-happstack-extra-doc (<< 0.87)
+Conflicts: haskell-happstack-extra-doc (<< 0.87), haskell-revision-doc
+Provides: haskell-revision-doc
+Replaces: haskell-revision-doc
 Description: Modules for revision control and merging
  Modules for revision control and merging.
  .
