@@ -51,8 +51,8 @@ import Data.IxSet (Indexable(..), IxSet(..), (@=), (@+), toList, fromList, delet
 import Data.IxSet.Merge (threeWayMerge, continue)
 import Data.IxSet.POSet (commonAncestor)
 import Data.IxSet.Revision (Revisable(getRevisionInfo, putRevisionInfo), initialRevision,
-                                      RevisionInfo(RevisionInfo, created, revision, parentRevisions),
-                                      Revision(ident, number), NodeStatus(Head, NonHead), nodeStatus)
+                            RevisionInfo(RevisionInfo, created, revision, parentRevisions), prettyRevisionInfo,
+                            Revision(ident, number), prettyRevision, NodeStatus(Head, NonHead), nodeStatus)
 import Happstack.State (EpochMilli, Version)
 import Prelude hiding (null)
 
@@ -127,11 +127,11 @@ instance Version (Triplet a)
 -- |Return a particular revision.
 askRev :: (MonadPlus m, Store set k elt s) => (elt -> Maybe elt) -> Revision k -> set -> m elt
 askRev scrub rev store =
-    case map scrub (toList (getIxSet store @= (trace ("  askRev " ++ show rev) rev))) of
-      [] -> fail ("askRev: no such revision: " ++ show rev)
-      [Just x] -> return $ trace ("  askRev -> " ++ show (getRevisionInfo x)) x
+    case map scrub (toList (getIxSet store @= (trace ("  askRev " ++ show (prettyRevision rev)) rev))) of
+      [] -> fail ("askRev: no such revision: " ++ show (prettyRevision rev))
+      [Just x] -> return $ trace ("  askRev -> " ++ show (prettyRevisionInfo (getRevisionInfo x))) x
       [Nothing] -> fail "askRev: permission denied"
-      xs -> fail ("askRev: duplicate revisions: " ++ show (map getRevisionInfo (catMaybes xs)))
+      xs -> fail ("askRev: duplicate revisions: " ++ show (map (prettyRevisionInfo . getRevisionInfo) (catMaybes xs)))
 
 -- |Return all the revisions for a given ident.
 askAllRevs :: (Store set k elt s, Revisable k elt) => (elt -> Maybe elt) -> k -> set -> [Maybe elt]
@@ -140,7 +140,7 @@ askAllRevs scrub i store = map scrub (toList ((getIxSet store) @= i))
 -- |Return all the head revisions for a given ident.
 askHeads :: (Store set k elt s) => (elt -> Maybe elt) -> k -> set -> [Maybe elt]
 askHeads scrub i store =
-    trace ("  askHeads -> " ++ show (map (fmap getRevisionInfo) xs)) xs
+    trace ("  askHeads -> " ++ show (map (fmap (prettyRevisionInfo . getRevisionInfo)) xs)) xs
     where
       xs = map scrub (toList xis)
       xis = (getIxSet store) @= Head @= (trace ("  askHeads " ++ show i) i)
@@ -200,7 +200,7 @@ reviseAndMerge scrub prep creationTime revs x store =
     if all isJust xs
     then replace1 scrub creationTime revs x store >>=
              \ (store', x') ->
-               let i = trace ("  reviseAndMerge " ++ show revs) (ident (revision (getRevisionInfo x'))) in
+               let i = trace ("  reviseAndMerge " ++ show (map prettyRevision revs)) (ident (revision (getRevisionInfo x'))) in
                combineHeads scrub prep i creationTime store' >>= 
                             \ (store'', heads) ->
                                 return (maybe (Just store') Just store'', x', heads)
@@ -298,8 +298,8 @@ setStatus scrub status rev store =
           let xo' = putRevisionInfo ((getRevisionInfo xo) {nodeStatus = status}) xo in
           return (putIxSet (insert xo' xs') store, xo')
       [Nothing] -> fail "Permission denied"
-      [] -> fail ("Not found: " ++ show rev)
-      xs -> fail ("Duplicate revisions: " ++ show (map getRevisionInfo (catMaybes xs)))
+      [] -> fail ("Not found: " ++ show (prettyRevision rev))
+      xs -> fail ("Duplicate revisions: " ++ show (map (prettyRevisionInfo . getRevisionInfo) (catMaybes xs)))
 
 -- |Delete a revision from the store, and remove its revision number
 -- from all parent lists.  Return the new head, if there still is one.
@@ -430,7 +430,7 @@ replace' scrub i creationTime parentRevs children store =
       True -> fail "replace: Permission denied"
       False -> if size set'' == size set' + length children'
                then return (store'', children')
-               else fail ("Failed to insert " ++ show childRevs' ++ " into " ++ gshowSet set' ++ ": result was " ++ gshowSet set'')
+               else fail ("Failed to insert " ++ show (map prettyRevision childRevs') ++ " into " ++ gshowSet set' ++ ": result was " ++ gshowSet set'')
     where
       store'' :: set
       store'' = putMaxRev i (getMaxRev i store' + toInteger (length children)) store'
@@ -472,7 +472,7 @@ replaceA' scrub i creationTime parentRevs children store =
       True -> error "replace: Permission denied"
       False -> if size set'' == size set' + length children'
                then pure (store'', children')
-               else error ("Failed to insert " ++ show childRevs' ++ " into " ++ gshowSet set' ++ ": result was " ++ gshowSet set'')
+               else error ("Failed to insert " ++ show (map prettyRevision childRevs') ++ " into " ++ gshowSet set' ++ ": result was " ++ gshowSet set'')
     where
       store'' :: set
       store'' = putMaxRev i (getMaxRev i store' + toInteger (length children)) store'
@@ -525,7 +525,7 @@ _fixBadRevs i store =
             store'' = putIxSet ix' store'
             ix' = insert x' (delete x ix)
             ix = getIxSet store'
-            x' = putRevisionInfo (trace ("  Changing revision from " ++ show info ++ " to " ++ show info') info') x
+            x' = putRevisionInfo (trace ("  Changing revision from " ++ show (prettyRevisionInfo info) ++ " to " ++ show (prettyRevisionInfo info')) info') x
             info' = info {revision = (revision info) {number = rev}, nodeStatus = Head}
             info = getRevisionInfo x
             store' = putMaxRev i rev store
@@ -537,9 +537,9 @@ _fixBadRevs i store =
       set = getIxSet store
 
 _showTriplet :: (Revisable k a, Show k) => Triplet a -> String
-_showTriplet (Triplet o l r) = "Triplet {o=" ++ (show . revision . getRevisionInfo $ o) ++
-                               ", l=" ++ (show . revision . getRevisionInfo $ l) ++
-                               ", r=" ++ (show . revision . getRevisionInfo $ r) ++ "}"
+_showTriplet (Triplet o l r) = "Triplet {o=" ++ (show . prettyRevision . revision . getRevisionInfo $ o) ++
+                               ", l=" ++ (show . prettyRevision . revision . getRevisionInfo $ l) ++
+                               ", r=" ++ (show . prettyRevision . revision . getRevisionInfo $ r) ++ "}"
 
 gshowSet :: (Ord a, Data a, Show a) => IxSet a -> String
 gshowSet s = gshowList (toList s)
@@ -554,9 +554,9 @@ allEqual (x : more) = all (\ y -> x == y) more
 allEqual [] = True
 
 _traceRev :: (Revisable k a, Show k) => String -> a -> a
-_traceRev prefix x = trace (prefix ++ show (getRevisionInfo x)) x
+_traceRev prefix x = trace (prefix ++ show (prettyRevisionInfo (getRevisionInfo x))) x
 _traceRevs :: (Revisable k a, Show k) => String -> [a] -> [a]
-_traceRevs prefix xs = trace (prefix ++ show (map getRevisionInfo xs)) xs
+_traceRevs prefix xs = trace (prefix ++ show (map (prettyRevisionInfo . getRevisionInfo) xs)) xs
 
 -- | Takes the intersection of the two IxSets
 difference :: (Ord a, Data a, Indexable a) => IxSet a -> IxSet a -> IxSet a

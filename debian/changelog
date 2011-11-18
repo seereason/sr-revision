@@ -1,6 +1,7 @@
 haskell-revision (0.3) unstable; urgency=low
 
   * Change doc package name prefix to libghc.
+  * Remove bad Show instances
 
  -- David Fox <dsf@seereason.com>  Fri, 18 Nov 2011 09:25:25 -0800
 

@@ -11,8 +11,20 @@ Exposed-Modules:  Data.IxSet.POSet, Data.IxSet.Revision, Data.IxSet.Revision.Old
                   Data.IxSet.Revision.Current, Data.IxSet.Revision.Instances, Data.IxSet.Merge,
 		  Data.IxSet.Store, Data.IxSet.Triplets, Data.IxSet.Extra
                   
-Build-Depends:    base >= 4, containers, mtl, syb, syb-with-class, text, bytestring, applicative-extras,
-                  happstack-data, happstack-state, HUnit, ixset, utf8-string
+Build-Depends:    applicative-extras,
+                  base >= 4,
+                  bytestring,
+                  containers,
+                  happstack-data,
+                  happstack-state,
+                  HUnit,
+                  ixset,
+                  mtl,
+                  pretty,
+                  syb,
+                  syb-with-class,
+                  text,
+                  utf8-string
 
 Build-Type:       Simple
 Category:         Web, Language

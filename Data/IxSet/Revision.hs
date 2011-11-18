@@ -19,9 +19,11 @@
 {-# OPTIONS -fno-warn-orphans -Wwarn #-}
 module Data.IxSet.Revision
     ( RevisionInfo(..)
+    , prettyRevisionInfo
     , Revisable(..)
     , Ident(..)
     , Revision(..)
+    , prettyRevision
     , changeRevisionInfo
     , NodeStatus(..)
     , copyRev

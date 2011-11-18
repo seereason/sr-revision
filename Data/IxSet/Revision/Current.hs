@@ -5,7 +5,9 @@
 module Data.IxSet.Revision.Current
     ( Ident(..)
     , Revision(..)
+    , prettyRevision
     , RevisionInfo(..)
+    , prettyRevisionInfo
     , NodeStatus(..)
     ) where
 
@@ -14,6 +16,7 @@ import qualified Data.Generics.SYB.WithClass.Basics as N
 import qualified Data.Generics.SYB.WithClass.Context as N
 import Happstack.Data (Default(..), deriveNewData, deriveNewDataNoDefault, deriveAll)
 import Happstack.State (EpochMilli)
+import Text.PrettyPrint (Doc, text)
 
 -- | Identifier for a item which can have multiple revisions.  This is
 -- an example of a type that could be used as the @k@ type of
@@ -53,6 +56,17 @@ data Enum k => Revision k
       }
     deriving (Eq, Ord, Read, Data, Typeable)
 
+prettyRevisionInfo :: (Show k, Enum k) => RevisionInfo k -> Doc
+prettyRevisionInfo r =
+    text ("(" ++ show (prettyRevision (revision r)) ++
+          " created: " ++ show (created r) ++
+          (if nodeStatus r == Head then " (Head)" else " (NonHead)") ++
+          " parents: " ++ show (parentRevisions r) ++ ")")
+
+prettyRevision :: (Show k, Enum k) => Revision k -> Doc
+prettyRevision r = text (show (ident r) ++ "." ++ show (number r))
+
+{-
 instance (Enum k, Show k) => Show (RevisionInfo k) where
     show r = "(" ++ show (revision r) ++
              " created: " ++ show (created r) ++
@@ -61,6 +75,7 @@ instance (Enum k, Show k) => Show (RevisionInfo k) where
 
 instance (Enum k, Show k) => Show (Revision k) where
     show r = show (ident r) ++ "." ++ show (number r)
+-}
 
 instance (Enum k, Default k) => Default (Revision k) where
     defaultValue = Revision {ident = defaultValue, number = 1}
