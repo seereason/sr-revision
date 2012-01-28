@@ -1,5 +1,5 @@
 Name:             revision
-Version:          0.3
+Version:          0.4
 License:          BSD3
 Author:           david@seereason.com
 Maintainer:       partners@seereason.com
@@ -16,7 +16,6 @@ Build-Depends:    applicative-extras,
                   bytestring,
                   containers,
                   happstack-data,
-                  happstack-state,
                   HUnit,
                   ixset,
                   mtl,

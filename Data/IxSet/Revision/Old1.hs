@@ -3,8 +3,11 @@ module Data.IxSet.Revision.Old1 where
 
 import Data.Generics
 import Happstack.Data
+import Data.Int (Int64)
 import Data.IxSet.Revision.Current (Ident, NodeStatus)
-import Happstack.State (EpochMilli)
+--import Happstack.State (EpochMilli)
+
+type EpochMilli = Int64
 
 -- | The information associated with a revision to record its status.
 data RevisionInfo001

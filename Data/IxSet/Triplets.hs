@@ -31,8 +31,7 @@ import Data.Generics (Data, Typeable, toConstr, cast, gcast, gmapAccumQ, gshow, 
                       unGM, GenericM, GenericM'(GM), gmapAccumM,
                       unGQ, GenericQ, GenericQ'(GQ), gmapQ)
 import Data.Maybe (fromMaybe)
-import Happstack.Data (deriveSerialize)
-import Happstack.State (Version)
+import Happstack.Data (deriveSerialize, Version)
 
 instance MonadPlus Failing where
     mzero = Failure []

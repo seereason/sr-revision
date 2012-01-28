@@ -14,9 +14,12 @@ module Data.IxSet.Revision.Current
 import Data.Generics
 import qualified Data.Generics.SYB.WithClass.Basics as N
 import qualified Data.Generics.SYB.WithClass.Context as N
+import Data.Int (Int64)
 import Happstack.Data (Default(..), deriveNewData, deriveNewDataNoDefault, deriveAll)
-import Happstack.State (EpochMilli)
+-- import Happstack.State (EpochMilli)
 import Text.PrettyPrint (Doc, text)
+
+type EpochMilli = Int64
 
 -- | Identifier for a item which can have multiple revisions.  This is
 -- an example of a type that could be used as the @k@ type of

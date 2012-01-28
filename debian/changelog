@@ -1,3 +1,9 @@
+haskell-revision (0.4) unstable; urgency=low
+
+  * Remove dependency on happstack-state.
+
+ -- David Fox <dsf@seereason.com>  Sat, 28 Jan 2012 07:04:41 -0800
+
 haskell-revision (0.3) unstable; urgency=low
 
   * Change doc package name prefix to libghc.

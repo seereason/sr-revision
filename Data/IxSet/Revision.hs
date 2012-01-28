@@ -18,7 +18,8 @@
              UndecidableInstances #-}
 {-# OPTIONS -fno-warn-orphans -Wwarn #-}
 module Data.IxSet.Revision
-    ( RevisionInfo(..)
+    ( EpochMilli
+    , RevisionInfo(..)
     , prettyRevisionInfo
     , Revisable(..)
     , Ident(..)
@@ -50,13 +51,16 @@ import Data.List (tails, intercalate)
 import qualified Data.Set as S
 import qualified Data.Text as T
 --import Happstack.Data (Default(..), deriveNewData, deriveNewDataNoDefault, deriveSerialize, Migrate(..))
+import Data.Int (Int64)
 import Data.IxSet
 import Data.IxSet.POSet
 import qualified Data.IxSet.POSet as P
 import Data.IxSet.Triplets (mergeBy, {-mergeByM,-} mkQ2, extQ2, gzipBut3, GM)
-import Happstack.State (EpochMilli)
+--import Happstack.State (EpochMilli)
 import Data.IxSet.Revision.Current
 import Data.IxSet.Revision.Instances()
+
+type EpochMilli = Int64
 
 -- |If we want to do revision management for a type @a@, we first
 -- create an instance of 'Revisable' for that type.  We also need a
