@@ -3,6 +3,7 @@
 module Data.IxSet.Revision.Instances where
 
 import Data.Generics
+import Data.SafeCopy (base, deriveSafeCopy)
 import Happstack.Data (Version(..), Proxy(..), Mode(..), proxy, extension, deriveSerialize, Migrate(..))
 import qualified Data.IxSet.Revision.Old1 as O1
 import qualified Data.IxSet.Revision.Current as C
@@ -37,8 +38,10 @@ instance Enum k => Migrate O1.Revision002 (C.Revision k) where
 
 instance Version O1.Revision002
 $(deriveSerialize ''O1.Revision002)
+$(deriveSafeCopy 1 'base ''O1.Revision002)
 instance Version O1.RevisionInfo002
 $(deriveSerialize ''O1.RevisionInfo002)
+$(deriveSafeCopy 1 'base ''O1.RevisionInfo002)
 instance Enum k => Version (C.RevisionInfo k) where
     mode = x
         where
@@ -47,13 +50,17 @@ instance Enum k => Version (C.RevisionInfo k) where
           y :: Proxy O1.RevisionInfo002
           y = proxy undefined
 $(deriveSerialize ''C.RevisionInfo)
+$(deriveSafeCopy 1 'base ''C.RevisionInfo)
 instance Enum k => Version (C.Revision k) where
     mode = x
         where
           x :: Enum k => Mode (C.Revision k)
           x = extension 1 (proxy undefined :: Proxy O1.Revision002)
 $(deriveSerialize ''C.Revision)
+$(deriveSafeCopy 1 'base ''C.Revision)
 instance Version C.NodeStatus
 $(deriveSerialize ''C.NodeStatus)
+$(deriveSafeCopy 1 'base ''C.NodeStatus)
 instance Version C.Ident
 $(deriveSerialize ''C.Ident)
+$(deriveSafeCopy 1 'base ''C.Ident)

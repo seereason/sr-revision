@@ -31,7 +31,9 @@ import Data.Generics (Data, Typeable, toConstr, cast, gcast, gmapAccumQ, gshow, 
                       unGM, GenericM, GenericM'(GM), gmapAccumM,
                       unGQ, GenericQ, GenericQ'(GQ), gmapQ)
 import Data.Maybe (fromMaybe)
+import Data.SafeCopy (base, deriveSafeCopy)
 import Happstack.Data (deriveSerialize, Version)
+import Happstack.State (Version)
 
 instance MonadPlus Failing where
     mzero = Failure []
@@ -42,6 +44,7 @@ instance MonadPlus Failing where
 --- TODO: move somewhere
 instance Version (Failing a)
 $(deriveSerialize ''Failing)
+$(deriveSafeCopy 1 'base ''Failing)
 
 cast' :: (Monad m, Typeable a, Typeable b) => a -> m b
 cast' = maybe (fail "cast") return . cast

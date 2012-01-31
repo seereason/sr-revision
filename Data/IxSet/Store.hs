@@ -45,6 +45,7 @@ import Data.List (tails, groupBy, sortBy, intercalate)
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 import Data.Maybe (catMaybes, isJust, isNothing)
+import Data.SafeCopy (base, deriveSafeCopy)
 import Data.Typeable (Typeable)
 import Happstack.Data (deriveSerialize, Default(..), deriveAll, Version)
 import Data.IxSet (Indexable(..), IxSet(..), (@=), (@+), toList, fromList, delete, insert, null, size, toSet, fromSet)
@@ -122,6 +123,7 @@ instance (Ord a, Default a) => Default (Triplet a) where
     defaultValue = Triplet defaultValue defaultValue defaultValue
 
 $(deriveSerialize ''Triplet)
+$(deriveSafeCopy 1 'base ''Triplet)
 instance Version (Triplet a)
 
 -- |Return a particular revision.
