@@ -1,3 +1,9 @@
+haskell-revision (0.6) unstable; urgency=low
+
+  * Retire old serialization code and migration instances.
+
+ -- David Fox <dsf@seereason.com>  Wed, 08 Feb 2012 10:35:01 -0800
+
 haskell-revision (0.5) unstable; urgency=low
 
   * Add SafeCopy instances.

@@ -47,14 +47,13 @@ import qualified Data.Set as Set
 import Data.Maybe (catMaybes, isJust, isNothing)
 import Data.SafeCopy (base, deriveSafeCopy)
 import Data.Typeable (Typeable)
-import Happstack.Data (deriveSerialize, Default(..), deriveAll, Version)
+import Happstack.Data (Default(..), deriveAll)
 import Data.IxSet (Indexable(..), IxSet(..), (@=), (@+), toList, fromList, delete, insert, null, size, toSet, fromSet)
 import Data.IxSet.Merge (threeWayMerge, continue)
 import Data.IxSet.POSet (commonAncestor)
 import Data.IxSet.Revision (Revisable(getRevisionInfo, putRevisionInfo), initialRevision,
                             RevisionInfo(RevisionInfo, created, revision, parentRevisions), prettyRevisionInfo,
                             Revision(ident, number), prettyRevision, NodeStatus(Head, NonHead), nodeStatus, EpochMilli)
--- import Happstack.State (EpochMilli, Version)
 import Prelude hiding (null)
 
 import Debug.Trace
@@ -122,9 +121,7 @@ $(deriveAll [''Eq, ''Ord, ''Read, ''Show]
 instance (Ord a, Default a) => Default (Triplet a) where
     defaultValue = Triplet defaultValue defaultValue defaultValue
 
-$(deriveSerialize ''Triplet)
 $(deriveSafeCopy 1 'base ''Triplet)
-instance Version (Triplet a)
 
 -- |Return a particular revision.
 askRev :: (MonadPlus m, Store set k elt s) => (elt -> Maybe elt) -> Revision k -> set -> m elt
