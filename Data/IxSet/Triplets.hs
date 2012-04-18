@@ -1,4 +1,4 @@
-{-# LANGUAGE RankNTypes, ScopedTypeVariables, TemplateHaskell #-}
+{-# LANGUAGE RankNTypes, ScopedTypeVariables, TemplateHaskell, DeriveDataTypeable, StandaloneDeriving #-}
 {-# OPTIONS -Wwarn #-}
 module Data.IxSet.Triplets
     ( gzipWithM3
@@ -26,18 +26,32 @@ import Prelude hiding (GT)
 import Control.Applicative (Applicative(..))
 import Control.Applicative.Error (Failing(..))
 import Control.Monad (MonadPlus(mzero, mplus))
-import Data.Generics (Data, Typeable, toConstr, cast, gcast, gmapAccumQ, gshow, gfoldlAccum,
+import Data.Generics (Data, Typeable, Typeable1, toConstr, cast, gcast, gmapAccumQ, gshow, gfoldlAccum,
                       unGT, GenericT, GenericT'(GT), gmapAccumT,
                       unGM, GenericM, GenericM'(GM), gmapAccumM,
                       unGQ, GenericQ, GenericQ'(GQ), gmapQ)
 import Data.Maybe (fromMaybe)
 import Data.SafeCopy (base, deriveSafeCopy)
 
+instance Monad Failing where
+  return = Success
+  m >>= f =
+      case m of
+        (Failure errs) -> (Failure errs)
+        (Success a) -> f a
+  fail errMsg = Failure [errMsg]
+
 instance MonadPlus Failing where
     mzero = Failure []
     mplus (Failure xs) (Failure ys) = Failure (xs ++ ys)
     mplus success@(Success _) _ = success
     mplus _ success@(Success _) = success
+  
+deriving instance Typeable1 Failing
+deriving instance Data a => Data (Failing a)
+deriving instance Read a => Read (Failing a)
+deriving instance Eq a => Eq (Failing a)
+deriving instance Ord a => Ord (Failing a)
 
 --- TODO: move somewhere
 $(deriveSafeCopy 1 'base ''Failing)
