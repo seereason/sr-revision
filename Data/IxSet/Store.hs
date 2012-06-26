@@ -113,7 +113,7 @@ data Triplet a
       { original :: a
       , left :: a
       , right :: a }
-    deriving (Eq, Ord, Read, Show)
+    deriving (Eq, Ord, Read, Show, Data, Typeable)
 
 {-
 instance (Ord a, Default a) => Default (Triplet a) where
