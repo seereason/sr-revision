@@ -15,7 +15,6 @@ import Data.Generics
 import qualified Data.Generics.SYB.WithClass.Basics as N
 import qualified Data.Generics.SYB.WithClass.Context as N
 import Data.Int (Int64)
-import Happstack.Data (Default(..), deriveNewData, deriveNewDataNoDefault, deriveAll)
 -- import Happstack.State (EpochMilli)
 import Text.PrettyPrint (Doc, text)
 
@@ -32,14 +31,14 @@ instance Enum Ident where
     toEnum = Ident . toInteger
     fromEnum = fromInteger . unIdent
 
-$(deriveNewData [''Ident])
+-- $(deriveNewData [''Ident])
 
 -- | Each node of the revision graph is either a @Head@, which means
 -- it is a "current" revision and not the parent of any other node, or
 -- @NonHead@ which means some other revision is newer.
 data NodeStatus = Head | NonHead deriving (Eq, Ord, Read, Show, Data, Typeable)
 
-$(deriveNewData [''NodeStatus])
+-- $(deriveNewData [''NodeStatus])
 
 -- | 'RevisionInfo' holds all the information associated with a
 -- | particular revision of a value.
@@ -80,11 +79,13 @@ instance (Enum k, Show k) => Show (Revision k) where
     show r = show (ident r) ++ "." ++ show (number r)
 -}
 
+{-
 instance (Enum k, Default k) => Default (Revision k) where
     defaultValue = Revision {ident = defaultValue, number = 1}
 
 instance (Enum k, Default k) => Default (RevisionInfo k) where
     defaultValue = RevisionInfo {revision = defaultValue, created = 0, parentRevisions = [], nodeStatus = Head}
+-}
 
 -- NewData instances with added context Enum k.  These were
 -- extracted from -ddump-splices output.

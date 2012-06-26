@@ -47,13 +47,12 @@ import qualified Data.Set as Set
 import Data.Maybe (catMaybes, isJust, isNothing)
 import Data.SafeCopy (base, deriveSafeCopy)
 import Data.Typeable (Typeable)
-import Happstack.Data (Default(..), deriveAll)
 import Data.IxSet (Indexable(..), IxSet(..), (@=), (@+), toList, fromList, delete, insert, null, size, toSet, fromSet)
 import Data.IxSet.Merge (threeWayMerge, continue)
 import Data.IxSet.POSet (commonAncestor)
 import Data.IxSet.Revision (Revisable(getRevisionInfo, putRevisionInfo), initialRevision,
                             RevisionInfo(RevisionInfo, created, revision, parentRevisions), prettyRevisionInfo,
-                            Revision(ident, number), prettyRevision, NodeStatus(Head, NonHead), nodeStatus, EpochMilli)
+                            Revision(Revision, ident, number), prettyRevision, NodeStatus(Head, NonHead), nodeStatus, EpochMilli)
 import Prelude hiding (null)
 
 import Debug.Trace
@@ -61,8 +60,8 @@ import Debug.Trace
 -- |The Store class, representing a revision controlled collection of elt.
 -- FIXME: We probably don't need all this context, particularly Show k, but
 -- it means adding Show k to the context of most of the functions below.
-class (Ord k, Eq k, Typeable k, Enum k, Default k, Show k, Revisable k elt,
-       Indexable elt, Data elt, Ord elt, Default elt) =>
+class (Ord k, Eq k, Typeable k, Enum k, Show k, Revisable k elt,
+       Indexable elt, Data elt, Ord elt) =>
       Store set k elt s | set -> elt, set -> s where
     getNextId :: set -> k
     putNextId :: k -> set -> set
@@ -109,17 +108,17 @@ getMaxRev i s =
 -- |The Triplet type represents a possible conflict between two values
 -- and their common ancestor (which may be missing if it was already
 -- deleted from the database.)
-$(deriveAll [''Eq, ''Ord, ''Read, ''Show]
-  [d|
-      data Triplet a
-          = Triplet
-            { original :: a
-            , left :: a
-            , right :: a }
-   |])
+data Triplet a
+    = Triplet
+      { original :: a
+      , left :: a
+      , right :: a }
+    deriving (Eq, Ord, Read, Show)
 
+{-
 instance (Ord a, Default a) => Default (Triplet a) where
     defaultValue = Triplet defaultValue defaultValue defaultValue
+-}
 
 $(deriveSafeCopy 1 'base ''Triplet)
 
@@ -277,11 +276,12 @@ combineHeadsA scrub prep i _creationTime set =
 _conflict :: forall a. a
 _conflict = undefined
 
-clearRev :: forall k a. (Revisable k a, Default k) => a -> a
+clearRev :: forall k a. (Revisable k a) => a -> a
 clearRev x =
-    putRevisionInfo ((defaultValue :: RevisionInfo k) {revision = (defaultValue :: Revision k) {ident = ident (revision (getRevisionInfo x))}}) x
+    putRevisionInfo (RevisionInfo {revision = Revision {ident = ident (revision (getRevisionInfo x)), number = 1},
+                                   created = 0, parentRevisions = [], nodeStatus = Head}) x
 
-_copyRev :: forall k a. (Revisable k a, Default k) => a -> a -> a
+_copyRev :: forall k a. (Revisable k a) => a -> a -> a
 _copyRev src dst = putRevisionInfo (getRevisionInfo src) dst
 
 -- |Change the node status of a revision to Head or NonHead.
