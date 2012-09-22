@@ -37,7 +37,7 @@ module Data.IxSet.Store
     ) where
 
 import Control.Applicative (Applicative(..))
---import Control.Applicative.Error (Failing(Success, Failure))
+import Control.Applicative.Error (Failing(Success, Failure))
 import Control.Monad (MonadPlus(..))
 import Data.Data (Data)
 import Data.Function (on)
@@ -349,16 +349,16 @@ deleteRev scrub rev store =
 -- head which has ancestors this function would have deleted.  There
 -- are several potential solutions to this problem, the simplest is to
 -- implement two way merging.
-prune :: forall m set k elt s. (MonadPlus m, Store set k elt s) =>
-         (elt -> Maybe elt) -> k -> set -> m (Maybe set)
+prune :: forall set k elt s. (Store set k elt s) =>
+         (elt -> Maybe elt) -> k -> set -> Failing (Maybe set)
 prune scrub i store =
     if any isNothing triplets
-    then fail "Permission denied"
+    then Failure ["Permission denied"]
     else if any isNothing keep
-         then fail "Permission denied"
-         else return (if null discard
-                      then Nothing
-                      else (Just $ putIxSet (difference set discard) store))
+         then Failure ["Permission denied"]
+         else Success (if null discard
+                       then Nothing
+                       else (Just $ putIxSet (difference set discard) store))
     where
       discard :: IxSet elt
       discard = difference all (fromList (catMaybes keep))
