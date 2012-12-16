@@ -4,7 +4,6 @@ module Data.IxSet.Revision.Instances where
 
 import Data.Generics
 import Data.SafeCopy (base, deriveSafeCopy)
-import Happstack.Data (Proxy(..), Mode(..), proxy, extension, Migrate(..))
 import qualified Data.IxSet.Revision.Current as C
 
 $(deriveSafeCopy 1 'base ''C.RevisionInfo)
