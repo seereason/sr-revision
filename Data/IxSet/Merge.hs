@@ -1,4 +1,4 @@
-{-# LANGUAGE ScopedTypeVariables, Rank2Types #-}
+{-# LANGUAGE ScopedTypeVariables, RankNTypes #-}
 {-# OPTIONS_GHC -Wwarn #-}
 -- | Merging of revisions.
 module Data.IxSet.Merge
