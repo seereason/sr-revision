@@ -1,6 +1,6 @@
--- | Merging of revisions.
 {-# LANGUAGE ScopedTypeVariables, Rank2Types #-}
-{-# OPTIONS -Wwarn #-}
+{-# OPTIONS_GHC -Wwarn #-}
+-- | Merging of revisions.
 module Data.IxSet.Merge
     ( threeWayMerge
     , twoOrThreeWayMerge
