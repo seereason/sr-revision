@@ -90,7 +90,8 @@ instance (Enum k, Default k) => Default (RevisionInfo k) where
 -- NewData instances with added context Enum k.  These were
 -- extracted from -ddump-splices output.
 
-instance (Enum k,
+instance (N.Typeable1 Revision,
+          Enum k,
           N.Data ctx k,
           N.Data ctx Integer,
           N.Sat (ctx (Revision k)),
@@ -111,7 +112,8 @@ dataTypeS2 = N.mkDataType "Revision" [constrS1]
 constrS1 :: N.Constr
 constrS1 = N.mkConstr dataTypeS2 "Revision" ["ident", "number"] N.Prefix
 
-instance (Enum k,
+instance (N.Typeable1 RevisionInfo,
+          Enum k,
           N.Data ctx k,
           N.Data ctx (Revision k),
           N.Data ctx EpochMilli,
