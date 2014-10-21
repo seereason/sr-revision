@@ -47,7 +47,7 @@ instance MonadPlus Failing where
     mplus success@(Success _) _ = success
     mplus _ success@(Success _) = success
   
-deriving instance Typeable1 Failing
+deriving instance Typeable Failing
 deriving instance Data a => Data (Failing a)
 deriving instance Read a => Read (Failing a)
 deriving instance Eq a => Eq (Failing a)

@@ -14,7 +14,6 @@ Build-Depends: debhelper (>= 7.0),
                libghc-mtl-prof,
                libghc-safecopy-prof,
                libghc-syb-prof,
-               libghc-syb-with-class-prof,
                libghc-text-prof,
                libghc-utf8-string-prof
 Build-Depends-Indep: ghc-doc,
@@ -24,7 +23,6 @@ Build-Depends-Indep: ghc-doc,
                      libghc-mtl-doc,
                      libghc-safecopy-doc,
                      libghc-syb-doc,
-                     libghc-syb-with-class-doc,
                      libghc-text-doc
 Build-Conflicts: libghc6-happstack-extra-dev (<< 0.87)
 Standards-Version: 3.8.1

@@ -12,10 +12,7 @@ module Data.IxSet.Revision.Current
     ) where
 
 import Data.Generics
-import qualified Data.Generics.SYB.WithClass.Basics as N
-import qualified Data.Generics.SYB.WithClass.Context as N
 import Data.Int (Int64)
--- import Happstack.State (EpochMilli)
 import Text.PrettyPrint (Doc, text)
 
 type EpochMilli = Int64
@@ -31,19 +28,15 @@ instance Enum Ident where
     toEnum = Ident . toInteger
     fromEnum = fromInteger . unIdent
 
--- $(deriveNewData [''Ident])
-
 -- | Each node of the revision graph is either a @Head@, which means
 -- it is a "current" revision and not the parent of any other node, or
 -- @NonHead@ which means some other revision is newer.
 data NodeStatus = Head | NonHead deriving (Eq, Ord, Read, Show, Data, Typeable)
 
--- $(deriveNewData [''NodeStatus])
-
 -- | 'RevisionInfo' holds all the information associated with a
 -- | particular revision of a value.
 data Enum k => RevisionInfo k
-    = RevisionInfo 
+    = RevisionInfo
       { revision :: Revision k -- ^ Contains the value identifier and the sequence number of the revision.
       , created :: EpochMilli  -- ^ The time at which the revision was created
       , parentRevisions :: [Integer] -- ^ The revision numbers from which this revision was derived.
@@ -67,77 +60,3 @@ prettyRevisionInfo r =
 
 prettyRevision :: (Show k, Enum k) => Revision k -> Doc
 prettyRevision r = text (show (ident r) ++ "." ++ show (number r))
-
-{-
-instance (Enum k, Show k) => Show (RevisionInfo k) where
-    show r = "(" ++ show (revision r) ++
-             " created: " ++ show (created r) ++
-             (if nodeStatus r == Head then " (Head)" else " (NonHead)") ++
-             " parents: " ++ show (parentRevisions r) ++ ")"
-
-instance (Enum k, Show k) => Show (Revision k) where
-    show r = show (ident r) ++ "." ++ show (number r)
--}
-
-{-
-instance (Enum k, Default k) => Default (Revision k) where
-    defaultValue = Revision {ident = defaultValue, number = 1}
-
-instance (Enum k, Default k) => Default (RevisionInfo k) where
-    defaultValue = RevisionInfo {revision = defaultValue, created = 0, parentRevisions = [], nodeStatus = Head}
--}
-
--- NewData instances with added context Enum k.  These were
--- extracted from -ddump-splices output.
-
-instance (N.Typeable1 Revision,
-          Enum k,
-          N.Data ctx k,
-          N.Data ctx Integer,
-          N.Sat (ctx (Revision k)),
-          N.Sat (ctx Integer)) =>
-    N.Data ctx (Revision k) where
-        gfoldl _ _f z x =
-            case x of
-              Revision argS7 argS8 -> _f (_f (z Revision) argS7) argS8
-        gunfold _ _k z c =
-            case N.constrIndex c of
-              1 -> _k (_k (z Revision)) 
-              _ -> error "gunfold: fallthrough"
-        toConstr _ x = case x of Revision _ _ -> constrS1
-        dataTypeOf _ _ = dataTypeS2
-
-dataTypeS2 :: N.DataType
-dataTypeS2 = N.mkDataType "Revision" [constrS1]
-constrS1 :: N.Constr
-constrS1 = N.mkConstr dataTypeS2 "Revision" ["ident", "number"] N.Prefix
-
-instance (N.Typeable1 RevisionInfo,
-          Enum k,
-          N.Data ctx k,
-          N.Data ctx (Revision k),
-          N.Data ctx EpochMilli,
-          N.Data ctx ([Integer]),
-          N.Data ctx NodeStatus,
-          N.Sat (ctx (RevisionInfo k)),
-          N.Sat (ctx (Revision k)),
-          N.Sat (ctx EpochMilli),
-          N.Sat (ctx ([Integer])),
-          N.Sat (ctx NodeStatus)) =>
-    N.Data ctx (RevisionInfo k) where
-        gfoldl _ _f z x =
-            case x of
-              { RevisionInfo argS18 argS19 argS20 argS21 ->
-                    _f (_f (_f (_f (z RevisionInfo) argS18) argS19) argS20) argS21 }
-        gunfold _ _k z c =
-            case N.constrIndex c of
-              1 -> _k (_k (_k (_k (z RevisionInfo))))
-              _ -> error "gunfold: fallthrough"
-        toConstr _ x =
-            case x of { RevisionInfo _ _ _ _ -> constrS12 }
-        dataTypeOf _ _ = dataTypeS13
-
-dataTypeS13 :: N.DataType
-dataTypeS13 = N.mkDataType "RevisionInfo" [constrS12]
-constrS12 :: N.Constr
-constrS12 = N.mkConstr dataTypeS13 "RevisionInfo" ["revision", "created", "parentRevisions", "nodeStatus"] N.Prefix

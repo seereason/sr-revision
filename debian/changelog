@@ -1,3 +1,9 @@
+haskell-revision (0.8.1) unstable; urgency=low
+
+  * Remove unused dependency on syb-with-class.
+
+ -- David Fox <dsf@seereason.com>  Tue, 21 Oct 2014 09:53:22 -0700
+
 haskell-revision (0.8) unstable; urgency=low
 
   * Make prune a pure function.

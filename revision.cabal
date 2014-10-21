@@ -1,5 +1,5 @@
 Name:             revision
-Version:          0.8
+Version:          0.8.1
 License:          BSD3
 Author:           david@seereason.com
 Maintainer:       partners@seereason.com
@@ -10,7 +10,7 @@ Description:      Modules for revision control and merging.
 Exposed-Modules:  Data.IxSet.POSet, Data.IxSet.Revision,
                   Data.IxSet.Revision.Current, Data.IxSet.Revision.Instances, Data.IxSet.Merge,
 		  Data.IxSet.Store, Data.IxSet.Triplets, Data.IxSet.Extra
-                  
+
 Build-Depends:    applicative-extras,
                   base >= 4,
                   bytestring,
@@ -21,7 +21,6 @@ Build-Depends:    applicative-extras,
                   pretty,
                   safecopy,
                   syb,
-                  syb-with-class,
                   text,
                   utf8-string
 
