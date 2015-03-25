@@ -1,11 +1,11 @@
-Name:             revision
+Name:             sr-revision
 Version:          0.8.1
 License:          BSD3
 Author:           david@seereason.com
 Maintainer:       partners@seereason.com
 
-Synopsis:         Modules for revision control and merging
-Description:      Modules for revision control and merging.
+Synopsis:         Modules for revision control and merging (Deprecated)
+Description:      Modules for revision control and merging (Deprecated)
 
 Exposed-Modules:  Data.IxSet.POSet, Data.IxSet.Revision,
                   Data.IxSet.Revision.Current, Data.IxSet.Revision.Instances, Data.IxSet.Merge,
